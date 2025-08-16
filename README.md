@@ -31,9 +31,9 @@ cd nama-project
 composer install
 ```
 
-### 3. Buat Database di phpMyAdmin
+### 3. Buat Database di Postgre
 
-Buka `http://localhost/phpmyadmin` lalu buat database baru dengan nama:
+Buatlah database di pgadmin dengan nama :
 
 ```
 db_fasilitas
@@ -50,15 +50,15 @@ cp .env.example .env
 Kemudian ubah konfigurasi database di file `.env` menjadi seperti ini:
 
 ```
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
-DB_PORT=3306
+DB_PORT=5432
 DB_DATABASE=db_fasilitas
-DB_USERNAME=root
-DB_PASSWORD=
+DB_USERNAME=postgres
+DB_PASSWORD=root
 ```
 
-> **Catatan**: Sesuaikan `DB_USERNAME` dan `DB_PASSWORD` jika kamu mengatur password untuk MySQL kamu.
+> **Catatan**: Sesuaikan `DB_USERNAME` dan `DB_PASSWORD` jika kamu mengatur password untuk Postgre kamu.
 
 ### 5. Generate Application Key
 
@@ -90,22 +90,7 @@ Aplikasi sekarang bisa diakses di:
 http://localhost:8000
 ```
 
-### 9. Jalankan XAMPP (Jika Perlu)
 
-Pastikan service **Apache** dan **MySQL** sudah aktif di XAMPP Control Panel.
-
----
-
-## 📞 Troubleshooting
-
-* Jika muncul error `SQLSTATE[HY000]`, pastikan database `db_fasilitas` sudah dibuat.
-* Jika port `8000` sudah digunakan, kamu bisa jalankan:
-
-  ```
-  php artisan serve --port=8080
-  ```
-
----
 
 ## 📄 Lisensi
 
