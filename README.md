@@ -9,7 +9,7 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan project Laravel secara loka
 
 Pastikan kamu sudah menginstal:
 
-* [XAMPP](https://www.apachefriends.org/)
+* [Postgre - PGAdmin](https://www.pgadmin.org/download/)
 * [Composer](https://getcomposer.org/)
 * PHP minimal versi 8.1
 * Git (opsional)
