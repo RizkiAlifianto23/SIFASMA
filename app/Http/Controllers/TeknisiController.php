@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Gedung;
 use App\Models\Lantai;
+use Illuminate\Support\Facades\Storage;
 
 class TeknisiController extends Controller
 {
@@ -186,29 +187,26 @@ class TeknisiController extends Controller
     }
     public function finish(Request $request, $id)
     {
-        // Validasi input gambar
-        $request->validate([
-            'foto_hasil' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'finished_at' => 'required|date',
-        ]);
+        // Validasi input
+            $request->validate([
+                'foto_hasil' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'finished_at' => 'required|date',
+            ]);
 
-        $laporan = Laporan::findOrFail($id);
-        $fotoPath = null;
-        if ($request->hasFile('foto_hasil')) {
-            $file = $request->file('foto_hasil');
-            if ($file->isValid()) {
-                // Simpan ke storage/app/public/perbaikan
-                $path = $file->store('perbaikan', 'public');
+            $laporan = Laporan::findOrFail($id);
 
-                // Simpan ke DB dengan prefix "storage/"
-                $laporan->foto_hasil = 'storage/' . $path;
+            if ($request->hasFile('foto_hasil')) {
+                // ⭐ Simpan file ke storage/app/public/perbaikan
+                $fotoPath = $request->file('foto_hasil')->store('perbaikan', 'public');
+
+                // Simpan path yang baru ke kolom 'foto_hasil'
+                $laporan->foto_hasil = $fotoPath;
             }
-        }
 
-        $laporan->status = 'selesai';
-        $laporan->finished_at = $request->finished_at;
-        $laporan->finished_by = auth()->id();
-        $laporan->save();
+            $laporan->status = 'selesai';
+            $laporan->finished_at = $request->finished_at;
+            $laporan->finished_by = auth()->id();
+            $laporan->save();
 
 
         RoleNotification::create([

@@ -13,6 +13,7 @@ use App\Models\Ruangan;
 use App\Models\Gedung; // Import model Gedung
 use Illuminate\Validation\Rule; // Import Rule untuk validasi khusus
 use App\Models\RoleNotification; // Import model RoleNotification
+use Illuminate\Support\Facades\Storage;
 
 
 class LaporanController extends Controller
@@ -76,6 +77,8 @@ class LaporanController extends Controller
 
         return view('laporan.dashboard', compact('laporan', 'gedungs', 'lantais'));
     }
+
+
     // Simpan laporan baru
     public function store(Request $request)
     {
@@ -109,11 +112,8 @@ class LaporanController extends Controller
         $fotoPath = null;
 
         if ($request->hasFile('foto_kerusakan')) {
-            $file = $request->file('foto_kerusakan');
-            if ($file->isValid()) {
-                $path = $file->store('image', 'public'); // simpan ke storage/app/public/image
-                $fotoPath = 'storage/' . $path;          // simpan path agar bisa diakses publik
-            }
+            // ⭐ Cara baru: Simpan file ke storage/app/public/images
+            $fotoPath = $request->file('foto_kerusakan')->store('images', 'public');
         }
 
         $laporan = Laporan::create([
@@ -141,6 +141,7 @@ class LaporanController extends Controller
 
         return redirect()->route('laporan')->with('success', 'Laporan berhasil dibuat.');
     }
+
     // Update laporan yang ada
     public function update(Request $request, $id)
     {
@@ -178,14 +179,17 @@ class LaporanController extends Controller
         $userId = Auth::id();
         $fotoPath = $laporan->foto_kerusakan;
 
-        // Ganti foto jika file baru diupload
+        // ⭐ Cara baru: Hapus file lama dari storage jika ada dan simpan yang baru
         if ($request->hasFile('foto_kerusakan')) {
-            $file = $request->file('foto_kerusakan');
-            if ($file->isValid()) {
-                $path = $file->store('image', 'public'); // simpan ke storage/app/public/image
-                $fotoPath = 'storage/' . $path;          // simpan path agar bisa diakses publik
+            // Hapus file lama jika ada
+            if ($laporan->foto_kerusakan) {
+                Storage::disk('public')->delete($laporan->foto_kerusakan);
             }
+
+            // Simpan file baru
+            $fotoPath = $request->file('foto_kerusakan')->store('images', 'public');
         }
+
         // Update data
         $laporan->update([
             'id_fasilitas' => $request->id_fasilitas,

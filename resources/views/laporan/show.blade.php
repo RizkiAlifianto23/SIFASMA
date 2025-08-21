@@ -109,7 +109,7 @@
                                                         class="text-muted">{{ \Carbon\Carbon::parse($laporan->approved_at)->format('F j, Y, g:i A') }}</small>
                                                 </p>
                                             @endif
-
+                                            
                                             @if ($laporan->is_vendor)
                                                 <p><strong>Butuh Vendor:</strong>
                                                     @if ($laporan->description_vendor)
@@ -155,22 +155,24 @@
                                     <div class="row mt-4">
                                         <h5 class="text-primary mb-3">Foto Laporan</h5>
                                         @if ($laporan->foto_kerusakan || $laporan->foto_hasil)
+
                                             @if ($laporan->foto_kerusakan)
                                                 <div class="col-md-6 mb-4">
                                                     <p><strong>Foto Kerusakan</strong></p>
-                                                    <img src="{{ asset($laporan->foto_kerusakan) }}"
+                                                    <img src="{{ route('show.image', ['filename' => basename($laporan->foto_kerusakan)]) }}"
                                                         class="img-fluid rounded shadow-sm w-100" alt="Foto Kerusakan"
                                                         style="cursor: pointer"
-                                                        onclick="showImageModal('{{ asset($laporan->foto_kerusakan) }}')">
+                                                        onclick="showImageModal('{{ route('show.image', ['filename' => basename($laporan->foto_kerusakan)]) }}')">
                                                 </div>
                                             @endif
+
                                             @if ($laporan->foto_hasil)
                                                 <div class="col-md-6 mb-4">
                                                     <p><strong>Foto Hasil</strong></p>
-                                                    <img src="{{ asset($laporan->foto_hasil) }}"
+                                                    <img src="{{ route('show.image', ['filename' => basename($laporan->foto_hasil)]) }}"
                                                         class="img-fluid rounded shadow-sm w-100" alt="Foto Hasil"
                                                         style="cursor: pointer"
-                                                        onclick="showImageModal('{{ asset($laporan->foto_hasil) }}')">
+                                                        onclick="showImageModal('{{ route('show.image', ['filename' => basename($laporan->foto_hasil)]) }}')">
                                                 </div>
                                             @endif
                                     </div>

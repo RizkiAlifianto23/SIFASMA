@@ -15,6 +15,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\TeknisiController;
 use App\Http\Controllers\LacakController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ImageController;
 
 // Home Page
 Route::middleware(['auth', 'check.status', 'role:admin,teknisi,ob,superadmin'])->group(function () {
@@ -100,3 +101,6 @@ Route::middleware(['auth', 'check.status', 'role:teknisi'])->group(function () {
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Rute untuk menyajikan gambar dari storage
+Route::get('/storage/images/{filename}', [ImageController::class, 'show'])->name('show.image');
