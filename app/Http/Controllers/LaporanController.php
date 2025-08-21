@@ -76,8 +76,6 @@ class LaporanController extends Controller
 
         return view('laporan.dashboard', compact('laporan', 'gedungs', 'lantais'));
     }
-
-
     // Simpan laporan baru
     public function store(Request $request)
     {
@@ -113,9 +111,8 @@ class LaporanController extends Controller
         if ($request->hasFile('foto_kerusakan')) {
             $file = $request->file('foto_kerusakan');
             if ($file->isValid()) {
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('image'), $filename);
-                $fotoPath = 'image/' . $filename;
+                $path = $file->store('image', 'public'); // simpan ke storage/app/public/image
+                $fotoPath = 'storage/' . $path;          // simpan path agar bisa diakses publik
             }
         }
 
@@ -144,7 +141,6 @@ class LaporanController extends Controller
 
         return redirect()->route('laporan')->with('success', 'Laporan berhasil dibuat.');
     }
-
     // Update laporan yang ada
     public function update(Request $request, $id)
     {
@@ -184,15 +180,12 @@ class LaporanController extends Controller
 
         // Ganti foto jika file baru diupload
         if ($request->hasFile('foto_kerusakan')) {
-            if ($fotoPath && file_exists(public_path($fotoPath))) {
-                unlink(public_path($fotoPath)); // hapus lama
+            $file = $request->file('foto_kerusakan');
+            if ($file->isValid()) {
+                $path = $file->store('image', 'public'); // simpan ke storage/app/public/image
+                $fotoPath = 'storage/' . $path;          // simpan path agar bisa diakses publik
             }
-
-            $filename = time() . '_' . $request->file('foto_kerusakan')->getClientOriginalName();
-            $request->file('foto_kerusakan')->move(public_path('image'), $filename);
-            $fotoPath = 'image/' . $filename;
         }
-
         // Update data
         $laporan->update([
             'id_fasilitas' => $request->id_fasilitas,

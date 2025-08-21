@@ -109,7 +109,7 @@
                                                         class="text-muted">{{ \Carbon\Carbon::parse($laporan->approved_at)->format('F j, Y, g:i A') }}</small>
                                                 </p>
                                             @endif
-                                            
+
                                             @if ($laporan->is_vendor)
                                                 <p><strong>Butuh Vendor:</strong>
                                                     @if ($laporan->description_vendor)
@@ -177,23 +177,24 @@
                                             @endif
                                     </div>
                                     @endif
-
                                     <div class="mt-4 text-end d-flex gap-2 justify-content-end">
-                                        @if ($laporan->status === 'menunggu')
-                                            <button onclick="showApproveModal({{ $laporan->id }})"
-                                                class="btn btn-success rounded-pill px-4">
-                                                <i class="bi bi-check-circle"></i> Approve
-                                            </button>
-                                            <button onclick="showRejectModal({{ $laporan->id }})"
-                                                class="btn btn-danger rounded-pill px-4">
-                                                <i class="bi bi-x-circle"></i> Reject
-                                            </button>
+                                        @if ($laporan->foto_kerusakan)
+                                            <div class="col-md-6 mb-4">
+                                                <p><strong>Foto Kerusakan</strong></p>
+                                                <img src="{{ asset($laporan->foto_kerusakan) }}"
+                                                    class="img-fluid rounded shadow-sm w-100" alt="Foto Kerusakan"
+                                                    style="cursor: pointer"
+                                                    onclick="showImageModal('{{ asset($laporan->foto_kerusakan) }}')">
+                                            </div>
                                         @endif
-                                        @if ($laporan->status === 'selesai')
-                                            <a href="{{ route('laporan.pdf', $laporan->id) }}"
-                                                class="btn btn-outline-danger rounded-pill px-4">
-                                                <i class="bi bi-file-earmark-pdf"></i> Unduh PDF
-                                            </a>
+                                        @if ($laporan->foto_hasil)
+                                            <div class="col-md-6 mb-4">
+                                                <p><strong>Foto Hasil</strong></p>
+                                                <img src="{{ asset($laporan->foto_hasil) }}"
+                                                    class="img-fluid rounded shadow-sm w-100" alt="Foto Hasil"
+                                                    style="cursor: pointer"
+                                                    onclick="showImageModal('{{ asset($laporan->foto_hasil) }}')">
+                                            </div>
                                         @endif
                                     </div>
 

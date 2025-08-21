@@ -109,7 +109,7 @@
                                                         class="text-muted">{{ \Carbon\Carbon::parse($laporan->approved_at)->format('F j, Y, g:i A') }}</small>
                                                 </p>
                                             @endif
-                                            
+
                                             @if ($laporan->is_vendor)
                                                 <p><strong>Butuh Vendor:</strong>
                                                     @if ($laporan->description_vendor)
@@ -155,7 +155,6 @@
                                     <div class="row mt-4">
                                         <h5 class="text-primary mb-3">Foto Laporan</h5>
                                         @if ($laporan->foto_kerusakan || $laporan->foto_hasil)
-
                                             @if ($laporan->foto_kerusakan)
                                                 <div class="col-md-6 mb-4">
                                                     <p><strong>Foto Kerusakan</strong></p>
@@ -165,7 +164,6 @@
                                                         onclick="showImageModal('{{ asset($laporan->foto_kerusakan) }}')">
                                                 </div>
                                             @endif
-
                                             @if ($laporan->foto_hasil)
                                                 <div class="col-md-6 mb-4">
                                                     <p><strong>Foto Hasil</strong></p>

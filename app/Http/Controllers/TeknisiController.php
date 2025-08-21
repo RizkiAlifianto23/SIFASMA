@@ -196,12 +196,13 @@ class TeknisiController extends Controller
         $fotoPath = null;
         if ($request->hasFile('foto_hasil')) {
             $file = $request->file('foto_hasil');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('perbaikan'), $filename);
-            $fotoPath = 'perbaikan/' . $filename;
+            if ($file->isValid()) {
+                // Simpan ke storage/app/public/perbaikan
+                $path = $file->store('perbaikan', 'public');
 
-            // Simpan ke kolom 'foto_hasil'
-            $laporan->foto_hasil = $fotoPath;
+                // Simpan ke DB dengan prefix "storage/"
+                $laporan->foto_hasil = 'storage/' . $path;
+            }
         }
 
         $laporan->status = 'selesai';
