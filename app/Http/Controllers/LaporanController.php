@@ -13,6 +13,8 @@ use App\Models\Ruangan;
 use App\Models\Gedung; // Import model Gedung
 use Illuminate\Validation\Rule; // Import Rule untuk validasi khusus
 use App\Models\RoleNotification; // Import model RoleNotification
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 
 class LaporanController extends Controller
@@ -111,15 +113,19 @@ class LaporanController extends Controller
         $fotoPath = null;
 
         if ($request->hasFile('foto_kerusakan')) {
-            $file = $request->file('foto_kerusakan');
-            if ($file->isValid()) {
-                // Simpan ke storage/app/public/image
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('image', $filename, 'public'); 
+            $uuid = (string) Str::uuid();
 
-                // path yg bisa disimpan di DB
-                $fotoPath = 'storage/' . $path; 
-            }
+            $fotoFile = $request->file('foto_kerusakan');
+            $fotoKerusakanName = 'foto_kerusakan_' . $uuid . '.' . $fotoFile->getClientOriginalExtension();
+
+            // folder tujuan di storage/app/public/foto_kerusakan
+            $path = 'foto_kerusakan';
+
+            // simpan file ke storage/app/public/foto_kerusakan
+            Storage::disk('public')->putFileAs($path, $fotoFile, $fotoKerusakanName);
+
+            // path untuk disimpan di DB
+            $fotoPath = 'storage/' . $path . '/' . $fotoKerusakanName;
         }
 
         $laporan = Laporan::create([
@@ -187,13 +193,19 @@ class LaporanController extends Controller
 
         // Ganti foto jika file baru diupload
         if ($request->hasFile('foto_kerusakan')) {
-            if ($fotoPath && file_exists(public_path($fotoPath))) {
-                unlink(public_path($fotoPath)); // hapus lama
-            }
+            $uuid = (string) Str::uuid();
 
-            $filename = time() . '_' . $request->file('foto_kerusakan')->getClientOriginalName();
-            $request->file('foto_kerusakan')->move(public_path('image'), $filename);
-            $fotoPath = 'image/' . $filename;
+            $fotoFile = $request->file('foto_kerusakan');
+            $fotoKerusakanName = 'foto_kerusakan_' . $uuid . '.' . $fotoFile->getClientOriginalExtension();
+
+            // folder tujuan di storage/app/public/foto_kerusakan
+            $path = 'foto_kerusakan';
+
+            // simpan file ke storage/app/public/foto_kerusakan
+            Storage::disk('public')->putFileAs($path, $fotoFile, $fotoKerusakanName);
+
+            // path untuk disimpan di DB
+            $fotoPath = 'storage/' . $path . '/' . $fotoKerusakanName;
         }
 
         // Update data
