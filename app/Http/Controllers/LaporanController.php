@@ -113,9 +113,12 @@ class LaporanController extends Controller
         if ($request->hasFile('foto_kerusakan')) {
             $file = $request->file('foto_kerusakan');
             if ($file->isValid()) {
+                // Simpan ke storage/app/public/image
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('image'), $filename);
-                $fotoPath = 'image/' . $filename;
+                $path = $file->storeAs('image', $filename, 'public'); 
+
+                // path yg bisa disimpan di DB
+                $fotoPath = 'storage/' . $path; 
             }
         }
 
