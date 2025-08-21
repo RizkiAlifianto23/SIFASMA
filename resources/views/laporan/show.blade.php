@@ -80,11 +80,11 @@
 
                                             <p><strong>Status:</strong><br>
                                                 <span
-                                                    class="badge bg-{{ $laporan->status === 'pending'
+                                                    class="badge bg-{{ $laporan->status === 'tertunda'
                                                         ? 'warning'
-                                                        : ($laporan->status === 'approved'
+                                                        : ($laporan->status === 'diterima'
                                                             ? 'success'
-                                                            : ($laporan->status === 'rejected'
+                                                            : ($laporan->status === 'ditolak'
                                                                 ? 'danger'
                                                                 : 'secondary')) }}">
                                                     <i class="bi bi-circle-fill me-1"></i>
@@ -108,13 +108,15 @@
                                                     <small
                                                         class="text-muted">{{ \Carbon\Carbon::parse($laporan->approved_at)->format('F j, Y, g:i A') }}</small>
                                                 </p>
-                                            @endif                                            
+                                            @endif
+                                            
                                             @if ($laporan->is_vendor)
                                                 <p><strong>Butuh Vendor:</strong>
                                                     @if ($laporan->description_vendor)
                                                         <br><small>{{ $laporan->description_vendor }}</small>
                                                     @endif
                                             @endif
+
                                             @if ($laporan->rejected_at)
                                                 <p><strong>Ditolak:</strong><br>
                                                     {{ $laporan->rejector->name ?? '-' }} <br>
@@ -148,11 +150,8 @@
                                                         class="text-muted">{{ \Carbon\Carbon::parse($laporan->cancelled_at)->format('F j, Y, g:i A') }}</small>
                                                 </p>
                                             @endif
-
                                         </div>
                                     </div>
-
-
                                     <div class="row mt-4">
                                         <h5 class="text-primary mb-3">Foto Laporan</h5>
                                         @if ($laporan->foto_kerusakan || $laporan->foto_hasil)
@@ -178,11 +177,18 @@
                                             @endif
                                     </div>
                                     @endif
-                                    <div class="mt-4 text-end">
-                                        <a href="{{ route('laporan') }}"
-                                            class="btn btn-outline-primary rounded-pill px-4 mx-3">
-                                            <i class="bi bi-arrow-left-circle"></i> Kembali ke Laporan
-                                        </a>
+
+                                    <div class="mt-4 text-end d-flex gap-2 justify-content-end">
+                                        @if ($laporan->status === 'menunggu')
+                                            <button onclick="showApproveModal({{ $laporan->id }})"
+                                                class="btn btn-success rounded-pill px-4">
+                                                <i class="bi bi-check-circle"></i> Approve
+                                            </button>
+                                            <button onclick="showRejectModal({{ $laporan->id }})"
+                                                class="btn btn-danger rounded-pill px-4">
+                                                <i class="bi bi-x-circle"></i> Reject
+                                            </button>
+                                        @endif
                                         @if ($laporan->status === 'selesai')
                                             <a href="{{ route('laporan.pdf', $laporan->id) }}"
                                                 class="btn btn-outline-danger rounded-pill px-4">
@@ -190,6 +196,8 @@
                                             </a>
                                         @endif
                                     </div>
+
+
                                 </div>
 
                             </div>
@@ -214,6 +222,51 @@
             </div>
         </div>
     </div>
+    <!-- Modal Approve -->
+    <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Konfirmasi Approve</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin <strong>menyetujui</strong> laporan ini?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <a id="approveConfirmBtn" href="#" class="btn btn-success">Ya, Approve</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Reject dengan alasan -->
+    <div class="modal fade" id="rejectModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered ">
+            <form id="rejectForm" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Konfirmasi Penolakan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Apakah Anda yakin ingin <strong>menolak</strong> laporan ini?</p>
+                        <div class="mb-3">
+                            <label for="rejected_reason" class="form-label">Alasan Penolakan</label>
+                            <textarea name="rejected_reason" id="rejected_reason" class="form-control" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Ya, Tolak</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 
     {{-- Scripts --}}
     <script src="/assets/js/feather-icons/feather.min.js"></script>
@@ -230,6 +283,18 @@
             modalImage.src = imageUrl;
             const modal = new bootstrap.Modal(document.getElementById('imageModal'));
             modal.show();
+        }
+    </script>
+    <script>
+        function showApproveModal(id) {
+            document.getElementById('approveConfirmBtn').href = `/admin/laporan/${id}/approve`;
+            new bootstrap.Modal(document.getElementById('approveModal')).show();
+        }
+
+        function showRejectModal(id) {
+            const rejectForm = document.getElementById('rejectForm');
+            rejectForm.action = `/admin/laporan/${id}/reject`; // pastikan route ini ada
+            new bootstrap.Modal(document.getElementById('rejectModal')).show();
         }
     </script>
 
