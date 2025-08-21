@@ -1,4 +1,3 @@
-
 ---
 
 # 🚀 Panduan Menjalankan Project Laravel
@@ -21,7 +20,7 @@ Pastikan kamu sudah menginstal:
 ### 1. Clone Repository (jika belum)
 
 ```bash
-git clone https://github.com/arifhida1647/fasilitas-kampus.git
+git clone https://github.com/RizkiAlifianto23/SIFASMA.git
 cd nama-project
 ```
 
@@ -89,8 +88,6 @@ Aplikasi sekarang bisa diakses di:
 ```
 http://localhost:8000
 ```
-
-
 
 ## 📄 Lisensi
 
